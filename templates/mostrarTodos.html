@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geovisor Parques</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Color de fondo */
+            font-family: Arial, sans-serif;
+        }
+
+        #map-container {
+            width: 100%;
+            height: 50vh;
+            position: relative; /* Añadido */
+        }
+        
+        #mapid {
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Añadido */
+
+        }
+
+        .container-table {
+            max-width: 800px;
+            margin: 50px auto 20px; /* Ajusté el margen superior a 50px */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        
+    
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    
+    </style>
+</head>
+<body>
+    <h1>Vista Parques</h1>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!--Mapa-->
+    <div id="map-container">
+        <h1 style="text-align: center; padding: 20px; color: #333;">Mi Mapa Interactivo</h1>
+        <div id="mapid"></div>
+    </div>
+    
+    <script>
+
+    var mymap = L.map('mapid').setView([4.7169694973141185, -74.101860320208], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    }).addTo(mymap);
+
+
+    </script>   
+
+    <!--marcadores--> 
+    <script>
+    // Primero, definimos las coordenadas del marcador
+    var coordenada_1=L.marker([4.717092608470525, -74.10112791233698]).addTo(mymap);
+    coordenada_1.bindPopup('<b>Nombre:</b> ' + 'Parque pequeño Bachue' + '<br><b>Descripción:</b> ' + 'Un paque muy pequeño' + '<a href="{{ url_for('agregar') }}" class="btn btn-primary" style="margin-top: 10px; display: block; color: black;">Agregar Datos</a>')
+    var coordenada_2=L.marker([4.715759398990988, -74.09842694709667]).addTo(mymap);
+    coordenada_2.bindPopup('<b>Nombre:</b> ' + 'Parque Luis Carlos Galán Sarmiento' + '<br><b>Descripción:</b> ' + 'Paque zonal, con canchas usadas para campeonatos, zonas de ejercicio y zonas para los niños' + '<a href="{{ url_for('agregar') }}" class="btn btn-primary" style="margin-top: 10px; display: block; color: black;">Agregar Datos</a>')
+    var coordenada_3=L.marker([4.716198132343901, -74.10293411868955]).addTo(mymap);
+    coordenada_3.bindPopup('<b>Nombre:</b> Parque zonal Bachue <br>' +
+    '<b>Descripción:</b> Parque zonal, con canchas de baloncesto y juegos para los más pequeños' +
+    '<a href="{{ url_for('agregar') }}" class="btn btn-primary" style="margin-top: 10px; display: block; color: black;">Agregar Datos</a>');
+    var coordenada_4=L.marker([4.719642432099459, -74.09553295443489]).addTo(mymap);
+    coordenada_4.bindPopup('<b>Nombre:</b> ' + 'Humedal Juan Amarillo' + '<br><b>Descripción:</b> ' + 'El Humedal Juan Amarillo, vital para Bogotá, ofrece servicios ambientales, biodiversidad y recreación, destacando su importancia en la ecología urbana.' + '<a href="{{ url_for('agregar') }}" class="btn btn-primary" style="margin-top: 10px; display: block; color: black;">Agregar Datos</a>')
+
+    {% for dato in datos %}
+    var coordenada = [{{ dato.lat }}, {{ dato.lng }}];
+    var marcador = L.marker(coordenada).addTo(mymap);
+    marcador.bindPopup('<b>Nombre:</b> ' + '{{ dato.nombre }}' + '<br><b>Descripción:</b> ' + '{{ dato.des }}' + '<a href="{{ url_for('agregar') }}" class="btn btn-primary" style="margin-top: 10px; display: block; color: black;">Agregar Datos</a>')
+    
+    {% endfor %}
+    
+    </script>
+    <div id="boton-container">
+        <button onclick="toggleTabla()">Mostrar/ocultar tabla</button>
+    </div>
+    
+    <!-- Contenedor de la tabla -->
+    <div class="container-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Parque pequeño Bachue</td>
+                    <td>4.717092608470525</td>
+                    <td>-74.10112791233698</td>
+                    <td>Un parque muy pequeño</td>
+                </tr>
+                <tr>
+                    <td>Parque Luis Carlos Galán Sarmiento</td>
+                    <td>4.715759398990988</td>
+                    <td>-74.09842694709667</td>
+                    <td>Parque zonal, con canchas usadas para campeonatos, zonas de ejercicio y zonas para los niños</td>
+                </tr>
+                <tr>
+                    <td>Parque zonal Bachue</td>
+                    <td>4.716198132343901</td>
+                    <td>-74.10293411868955</td>
+                    <td>Parque zonal, con canchas de baloncesto y juegos para los más pequeños</td>
+                </tr>
+                <tr>
+                    <td>Humedal Juan Amarillo</td>
+                    <td>4.719642432099459</td>
+                    <td>-74.09553295443489</td>
+                    <td>El Humedal Juan Amarillo, vital para Bogotá, ofrece servicios ambientales, biodiversidad y recreación, destacando su importancia en la ecología urbana.</td>
+                </tr>
+                {% for dato in datos %}
+                <tr>
+                    <td>{{ dato.nombre }}</td>
+                    <td>{{ dato.lat }}</td>
+                    <td>{{ dato.lng }}</td>
+                    <td>{{ dato.des }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
